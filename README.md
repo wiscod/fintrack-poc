@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 FinTrack — Proof of Concept (POC)
+> **Application Mobile Intelligente de Gestion Financière Personnelle & Copilote Prédictif**  
+> Développé pour la soutenance finale du module **StartUp'IT (4STUPIT / E4) — ÉSTIAM**  
+> 🌐 **Application en direct sur Vercel** : [https://fintrack-poc.vercel.app](https://fintrack-poc.vercel.app)
 
-## Getting Started
+---
 
-First, run the development server:
+## 👥 Équipe Fondatrice ÉSTIAM
+- **Hassâne ABACE** — Directeur des Ressources Humaines
+- **NGUEDIA ZAPFACK DUVAL** — Directeur Financier (CFO)
+- **Super Abel TCHOUFONG** — Lead Tech (CTO opérationnel)
+- **Edy Wise DJIHOUA** — Ingénieur Cybersécurité & DPO
+- **Rayan Trevis NDONGMO GNOFEU** — Développeur Fullstack
+- **Randy Neil TCHIMKIO KOUAMO** — Lead UX / UI
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 Fonctionnalités Clés du POC
+1. **Copilote Prédictif IA à 30 Jours** : Calcul glissant du solde résiduel tenant compte des échéances et abonnements récurrents.
+2. **Prévention Active des Découverts** : Détection dynamique des risques (ex: prélèvement EDF à J+6) et résolution en 1 clic via virement d'épargne (évitant 45 € d'agios).
+3. **Double Mode B2C / Freelance** : Sélecteur permettant de basculer en mode indépendant avec calcul et sanctuarisation automatique de l'URSSAF (22%) et de la TVA.
+4. **Bac à Sable Interactif pour le Jury** : Boutons de simulation de dépenses imprévues (+120 €, +250 €) pour démontrer en direct la réactivité de l'IA.
+5. **Console Cybersécurité & RGPD (Edy Wise DJIHOUA)** : Visualisation du chiffrement AES-256-GCM, tokenisation DSP2 et architecture Zero-Knowledge.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠️ Stack Technique
+- **Framework** : Next.js 16 (App Router) + React 19
+- **Design System** : Tailwind CSS (Thème Dark FinTech)
+- **Icônes** : Lucide React
+- **Hébergement & Déploiement** : Vercel Production ([https://fintrack-poc.vercel.app](https://fintrack-poc.vercel.app))
