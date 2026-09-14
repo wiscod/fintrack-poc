@@ -21,13 +21,10 @@ import {
   ChevronRight,
   ChevronLeft,
   Zap,
-  Info,
-  Layers,
-  Sparkle,
-  Compass,
   Check,
-  ArrowRight,
-  X
+  X,
+  Building2,
+  ArrowRight
 } from "lucide-react";
 
 interface Transaction {
@@ -120,22 +117,16 @@ const STRENGTHS: StrengthPoint[] = [
 ];
 
 export default function FinTrackPOC() {
-  // Mode controls
   const [mode, setMode] = useState<"b2c" | "freelance">("b2c");
   const [viewMode, setViewMode] = useState<"phone" | "fullscreen">("phone");
   const [isResolved, setIsResolved] = useState<boolean>(false);
   const [showSecurityConsole, setShowSecurityConsole] = useState<boolean>(false);
   const [isKeyDestroyed, setIsKeyDestroyed] = useState<boolean>(false);
 
-  // Strength showcase state (null = free exploration, 1..5 = guided mode)
   const [activeStrengthId, setActiveStrengthId] = useState<number | null>(1);
   const [isGuideOpen, setIsGuideOpen] = useState<boolean>(true);
 
-  // Exact math calibrated for the live demo scenario:
-  // Base current account balance: 410.00 €
-  // Total pending fixed bills before month end: 455.00 € (EDF 110€ + Box 40€ + Assurances 65€ + Courses 240€)
-  // Projected balance at Day 24: 410 - 455 = -45.00 € (Overdraft imminent!)
-  // Transfer 60.00 € from emergency savings -> new balance: 470.00 € -> new projected balance: +15.00 € (Safe!)
+  // Exact live financial logic
   const baseBalance = 410.0;
   const initialSavings = 2850.0;
   const transferAmount = 60.0;
@@ -143,9 +134,9 @@ export default function FinTrackPOC() {
 
   const currentBalance = isResolved ? baseBalance + transferAmount : baseBalance;
   const currentSavings = isResolved ? initialSavings - transferAmount : initialSavings;
-  const projectedEndOfMonth = currentBalance - fixedPending; // -45 € initially, +15 € once resolved
+  const projectedEndOfMonth = currentBalance - fixedPending; // -45 € vs +15 €
 
-  // Freelance exact numbers
+  // Freelance exact figures
   const freelanceBilled = 4250;
   const urssafReserve = 935; // 22% of 4250
   const tvaReserve = 850; // 20% of 4250
@@ -195,82 +186,82 @@ export default function FinTrackPOC() {
   const currentStrength = STRENGTHS.find((s) => s.id === activeStrengthId);
 
   return (
-    <main className="min-h-screen bg-[#070A12] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
+    <main className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-emerald-100 selection:text-emerald-900 relative">
       
-      {/* Background ambient lighting */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
+      {/* Subtile ambient background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-emerald-100/40 via-teal-50/20 to-transparent blur-3xl pointer-events-none -z-10" />
 
-      {/* Top Header Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b border-white/[0.06] bg-[#070A12]/85 backdrop-blur-xl px-4 py-2.5">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+      {/* Top Header Navigation (Apple / Stripe style) */}
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-4 sm:px-6 py-3 transition-colors">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
           
           {/* Brand Logo & Presentation Tag */}
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-500 flex items-center justify-center font-black text-slate-950 text-sm shadow-[0_0_20px_rgba(52,211,153,0.3)]">
+            <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-black text-white text-sm shadow-md shadow-emerald-500/20">
               FT
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-sm tracking-wider text-white">FINTRACK</span>
-                <span className="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold tracking-wide">
+                <span className="font-extrabold text-sm tracking-tight text-slate-900">FINTRACK</span>
+                <span className="px-2 py-0.5 text-[10px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold tracking-wide">
                   LIVE DEMO
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">
+              <p className="text-xs text-slate-500 hidden sm:block">
                 Copilote Financier Prédictif • ÉSTIAM StartUp&apos;IT 2026
               </p>
             </div>
           </div>
 
           {/* Quick Action Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             
             {/* Guide Toggle Button */}
             <button
               onClick={() => setIsGuideOpen(!isGuideOpen)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl border text-xs font-semibold transition cursor-pointer ${
                 isGuideOpen
-                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-                  : "bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border-white/[0.08]"
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-xs"
+                  : "bg-white hover:bg-slate-50 text-slate-700 border-slate-200 shadow-xs"
               }`}
               title="Afficher/Masquer le guide des points forts du projet"
             >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
               <span>Points Forts</span>
             </button>
 
             {/* Mode Switcher: Particulier vs Freelance */}
-            <div className="flex bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]">
+            <div className="flex bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80 shadow-inner">
               <button
                 onClick={() => setMode("b2c")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   mode === "b2c"
-                    ? "bg-white/[0.12] text-white shadow-sm"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-white text-slate-900 shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <User className="w-3.5 h-3.5 text-emerald-400" />
+                <User className="w-3.5 h-3.5 text-emerald-600" />
                 <span className="hidden sm:inline">Particulier</span>
               </button>
               <button
                 onClick={() => setMode("freelance")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   mode === "freelance"
-                    ? "bg-purple-500/20 text-purple-200 border border-purple-500/30 shadow-sm"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Briefcase className="w-3.5 h-3.5 text-purple-400" />
+                <Briefcase className="w-3.5 h-3.5 text-indigo-400" />
                 <span className="hidden sm:inline">Freelance</span>
               </button>
             </div>
 
             {/* Device View: Phone vs Fullscreen */}
-            <div className="hidden md:flex bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]">
+            <div className="hidden md:flex bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80">
               <button
                 onClick={() => setViewMode("phone")}
-                className={`p-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
-                  viewMode === "phone" ? "bg-white/[0.12] text-emerald-400" : "text-slate-400 hover:text-white"
+                className={`p-1.5 rounded-xl transition-all duration-200 cursor-pointer ${
+                  viewMode === "phone" ? "bg-white text-slate-900 shadow-xs" : "text-slate-500 hover:text-slate-900"
                 }`}
                 title="Format Smartphone"
               >
@@ -278,8 +269,8 @@ export default function FinTrackPOC() {
               </button>
               <button
                 onClick={() => setViewMode("fullscreen")}
-                className={`p-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
-                  viewMode === "fullscreen" ? "bg-white/[0.12] text-emerald-400" : "text-slate-400 hover:text-white"
+                className={`p-1.5 rounded-xl transition-all duration-200 cursor-pointer ${
+                  viewMode === "fullscreen" ? "bg-white text-slate-900 shadow-xs" : "text-slate-500 hover:text-slate-900"
                 }`}
                 title="Format Plein Écran"
               >
@@ -287,17 +278,17 @@ export default function FinTrackPOC() {
               </button>
             </div>
 
-            {/* Security Console Drawer Trigger (Edy Wise DJIHOUA) */}
+            {/* Security Console Trigger (Edy Wise DJIHOUA) */}
             <button
               onClick={() => setShowSecurityConsole(!showSecurityConsole)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl border text-xs font-semibold transition cursor-pointer ${
                 showSecurityConsole
-                  ? "bg-cyan-500/20 text-cyan-200 border-cyan-500/40"
-                  : "bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-slate-300 hover:text-white"
+                  ? "bg-teal-50 text-teal-800 border-teal-300 shadow-xs"
+                  : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-xs"
               }`}
               title="Console Cybersécurité & RGPD"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-teal-600" />
               <span className="hidden sm:inline">Sécurité DPO</span>
             </button>
 
@@ -306,20 +297,20 @@ export default function FinTrackPOC() {
         </div>
       </header>
 
-      {/* ⭐ INTERACTIVE SHOWCASE OF PROJECT STRENGTHS (Guide Soutenance Jury) */}
+      {/* ⭐ INTERACTIVE SHOWCASE OF PROJECT STRENGTHS (Guide Soutenance Jury - Light Mode Aéré) */}
       {isGuideOpen && (
-        <section className="w-full bg-[#0B0F1A]/90 border-b border-emerald-500/20 py-3.5 px-4 backdrop-blur-xl transition-all">
-          <div className="max-w-5xl mx-auto flex flex-col gap-3">
+        <section className="w-full bg-white border-b border-slate-200/80 py-5 px-4 sm:px-6 shadow-xs">
+          <div className="max-w-5xl mx-auto flex flex-col gap-4">
             
             {/* Top Bar with Tabs and Stepper */}
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                  <Sparkle className="w-3.5 h-3.5" />
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-emerald-600" />
                   Points Forts du Projet
                 </span>
-                <span className="text-[11px] text-slate-400 hidden md:inline">
-                  (Cliquez sur un point fort pour l&apos;activer dans l&apos;application)
+                <span className="text-xs text-slate-500 hidden md:inline">
+                  (Cliquez sur un point fort pour l&apos;activer en direct dans l&apos;interface)
                 </span>
               </div>
 
@@ -327,52 +318,52 @@ export default function FinTrackPOC() {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={handlePrevStrength}
-                  className="p-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
                   title="Point précédent"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="text-xs font-mono text-emerald-300 px-1.5">
+                <span className="text-xs font-mono font-bold text-slate-900 px-2">
                   {activeStrengthId || 1} / 5
                 </span>
                 <button
                   onClick={handleNextStrength}
-                  className="p-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
                   title="Point suivant"
                 >
-                  <ChevronRight className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setIsGuideOpen(false)}
-                  className="ml-2 text-slate-500 hover:text-slate-300 text-xs p-1"
+                  className="ml-2 text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100"
                   title="Masquer le guide"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
             {/* 5 Points Forts Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
               {STRENGTHS.map((st) => {
                 const isCurrent = activeStrengthId === st.id;
                 return (
                   <button
                     key={st.id}
                     onClick={() => handleSelectStrength(st.id)}
-                    className={`p-2 rounded-xl text-left transition-all duration-200 border cursor-pointer flex flex-col justify-between gap-1 ${
+                    className={`p-3.5 rounded-2xl text-left transition-all duration-200 border cursor-pointer flex flex-col justify-between gap-2 ${
                       isCurrent
-                        ? "bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-400/40"
-                        : "bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.06] text-slate-400 hover:text-slate-200"
+                        ? "bg-emerald-50/90 border-emerald-400 ring-2 ring-emerald-500/20 shadow-sm"
+                        : "bg-slate-50/70 hover:bg-slate-100 border-slate-200/80 text-slate-600"
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className={`text-[10px] font-bold tracking-tight uppercase ${isCurrent ? "text-emerald-300" : "text-slate-500"}`}>
+                      <span className={`text-[10px] font-bold tracking-tight uppercase ${isCurrent ? "text-emerald-700" : "text-slate-400"}`}>
                         {st.badge}
                       </span>
-                      {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                      {isCurrent && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
                     </div>
-                    <span className={`text-xs font-bold leading-snug line-clamp-1 ${isCurrent ? "text-white" : "text-slate-300"}`}>
+                    <span className={`text-xs font-bold leading-snug line-clamp-2 ${isCurrent ? "text-slate-900" : "text-slate-700"}`}>
                       {st.tabLabel}
                     </span>
                   </button>
@@ -382,41 +373,41 @@ export default function FinTrackPOC() {
 
             {/* Active Strength Detailed Comparative Callout */}
             {currentStrength && (
-              <div className="mt-1 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+              <div className="mt-2 p-5 rounded-3xl bg-slate-50/80 border border-slate-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-xs">
                 
                 {/* Left side: Context & Presenter */}
-                <div className="space-y-1 md:max-w-md">
+                <div className="space-y-1.5 md:max-w-md">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-extrabold text-sm text-white flex items-center gap-1.5">
-                      <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
+                      <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
                       {currentStrength.title}
                     </h3>
                   </div>
-                  <p className="text-slate-300 leading-relaxed text-[11px]">
+                  <p className="text-slate-600 leading-relaxed text-xs">
                     {currentStrength.shortDesc}
                   </p>
-                  <div className="text-[10px] text-slate-400 pt-0.5">
-                    🎤 <span className="text-slate-300 font-semibold">Orateurs démo :</span> {currentStrength.presenters}
+                  <div className="text-[11px] text-slate-500 pt-1">
+                    🎤 <span className="text-slate-800 font-semibold">Orateurs démo :</span> {currentStrength.presenters}
                   </div>
                 </div>
 
                 {/* Right side: Traditional vs FinTrack Breakthrough */}
-                <div className="w-full md:w-auto flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                <div className="w-full md:w-auto flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   
                   {/* Traditional Market problem */}
-                  <div className="p-2.5 rounded-xl bg-rose-500/[0.07] border border-rose-500/20 text-slate-300">
-                    <span className="text-rose-400 font-bold block text-[10px] uppercase tracking-wider mb-0.5">
-                      ❌ Banques & Concurrence
+                  <div className="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-200/80 text-slate-800">
+                    <span className="text-rose-700 font-bold block text-[10px] uppercase tracking-wider mb-1">
+                      ❌ Banques Traditionnelles
                     </span>
-                    <p className="leading-snug">{currentStrength.traditionalProblem}</p>
+                    <p className="leading-relaxed text-[11px] text-rose-950">{currentStrength.traditionalProblem}</p>
                   </div>
 
                   {/* FinTrack Innovation */}
-                  <div className="p-2.5 rounded-xl bg-emerald-500/[0.08] border border-emerald-500/25 text-slate-200">
-                    <span className="text-emerald-400 font-bold block text-[10px] uppercase tracking-wider mb-0.5">
+                  <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/90 text-slate-900">
+                    <span className="text-emerald-700 font-bold block text-[10px] uppercase tracking-wider mb-1">
                       ✓ Rupture FinTrack
                     </span>
-                    <p className="leading-snug">{currentStrength.fintrackBreakthrough}</p>
+                    <p className="leading-relaxed text-[11px] text-emerald-950 font-medium">{currentStrength.fintrackBreakthrough}</p>
                   </div>
 
                 </div>
@@ -429,59 +420,59 @@ export default function FinTrackPOC() {
       )}
 
       {/* Main Container Area */}
-      <div className="flex-1 w-full max-w-5xl mx-auto p-4 md:py-6 flex flex-col items-center justify-start">
+      <div className="flex-1 w-full max-w-5xl mx-auto p-4 sm:p-6 md:py-8 flex flex-col items-center justify-start">
         
         {/* Scenario Status Pill */}
-        <div className="w-full max-w-md mb-4 flex items-center justify-between px-3.5 py-2 bg-white/[0.03] border border-white/[0.07] rounded-2xl text-xs backdrop-blur-md">
-          <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isResolved ? "bg-emerald-400" : "bg-rose-500 animate-pulse"}`} />
-            <span className="text-slate-300 font-medium">
+        <div className="w-full max-w-md mb-6 flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200/80 rounded-2xl text-xs shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <span className={`w-2.5 h-2.5 rounded-full ${isResolved ? "bg-emerald-500" : "bg-rose-500 animate-ping"}`} />
+            <span className="text-slate-700 font-semibold">
               {isResolved ? "Scénario résolu (+15 € fin de mois sécurisée)" : "Alerte proactive J-6 : Risque découvert (-45 €)"}
             </span>
           </div>
           {isResolved && (
             <button
               onClick={handleReset}
-              className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-semibold transition cursor-pointer"
+              className="flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 font-bold transition cursor-pointer"
             >
-              <RefreshCw className="w-3 h-3" />
+              <RefreshCw className="w-3.5 h-3.5" />
               <span>Rejouer</span>
             </button>
           )}
         </div>
 
-        {/* Device Frame */}
+        {/* Device Frame (Apple iPhone / Wallet Ergonomics) */}
         <div
           className={`w-full transition-all duration-300 ${
             viewMode === "phone"
-              ? "max-w-md rounded-[52px] border-[6px] border-[#1C2333] bg-[#0B0F1A] shadow-[0_20px_80px_rgba(0,0,0,0.8)] overflow-hidden"
-              : "max-w-2xl rounded-3xl border border-white/[0.08] bg-[#0B0F1A] p-6 shadow-2xl"
+              ? "max-w-md rounded-[48px] border-[8px] border-slate-200 bg-white shadow-[0_25px_60px_-15px_rgba(15,23,42,0.12),0_0_0_1px_rgba(15,23,42,0.04)] overflow-hidden"
+              : "max-w-2xl rounded-3xl border border-slate-200 bg-white p-8 shadow-xl"
           }`}
         >
-          {/* Modern Dynamic Island Notch (Phone Mode) */}
+          {/* Dynamic Island Header (Phone Mode) */}
           {viewMode === "phone" && (
-            <div className="pt-3 px-7 pb-2 flex items-center justify-between text-[11px] font-medium text-slate-400 select-none">
+            <div className="pt-3.5 px-8 pb-3 flex items-center justify-between text-xs font-semibold text-slate-600 select-none bg-white">
               <span>09:41</span>
-              <div className="w-24 h-5 bg-black rounded-full flex items-center justify-end px-2 gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-slate-900 border border-slate-700" />
+              <div className="w-24 h-5 bg-slate-900 rounded-full flex items-center justify-end px-2.5 gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-slate-800" />
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px]">5G</span>
+                <span className="text-[11px] font-bold">5G</span>
                 <div className="w-4 h-2.5 border border-slate-400 rounded-xs p-0.5 flex items-center">
-                  <div className="w-full h-full bg-emerald-400 rounded-3xs" />
+                  <div className="w-full h-full bg-emerald-500 rounded-3xs" />
                 </div>
               </div>
             </div>
           )}
 
-          {/* App Body Content */}
-          <div className="p-4 sm:p-5 flex flex-col gap-4">
+          {/* App Body Content (Spacieux, Aéré, Lumineux) */}
+          <div className="p-5 sm:p-7 flex flex-col gap-6">
             
             {/* User Greeting & Open Banking Badge (Point Fort #4 Highlight) */}
-            <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Bonjour Maxime 👋</p>
-                <h1 className="text-base font-extrabold text-white tracking-tight">
+                <p className="text-xs font-semibold text-slate-400">Bonjour Maxime 👋</p>
+                <h1 className="text-lg font-black text-slate-900 tracking-tight mt-0.5">
                   {mode === "b2c" ? "Vue Budgétaire Proactive" : "Espace Trésorerie Freelance"}
                 </h1>
               </div>
@@ -489,76 +480,78 @@ export default function FinTrackPOC() {
               {/* Point Fort 4 Badge: DSP2 */}
               <button
                 onClick={() => handleSelectStrength(4)}
-                className={`px-2.5 py-1 rounded-full border flex items-center gap-1.5 transition cursor-pointer ${
+                className={`px-3 py-1.5 rounded-full border flex items-center gap-1.5 transition cursor-pointer ${
                   activeStrengthId === 4
-                    ? "bg-teal-500/20 border-teal-400 text-teal-200 ring-2 ring-teal-400/50 shadow-[0_0_15px_rgba(20,184,166,0.3)]"
-                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-300 hover:bg-emerald-500/20"
+                    ? "bg-teal-50 border-teal-400 text-teal-800 ring-2 ring-teal-500/20 shadow-xs"
+                    : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
                 }`}
                 title="Cliquer pour voir le Point Fort #4 : Open Banking DSP2"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-semibold">DSP2 Connecté</span>
-                <span className="text-[9px] px-1 rounded bg-teal-500/30 text-teal-200 font-mono">#4</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[11px] font-bold">DSP2 Connecté</span>
+                <span className="text-[10px] px-1 rounded bg-teal-100 text-teal-800 font-mono font-semibold">#4</span>
               </button>
             </div>
 
-            {/* Hero Card: Solde & Reste à Vivre Prédictif */}
-            <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border p-5 shadow-xl backdrop-blur-xl transition-all duration-300 ${
+            {/* Hero Card: Solde & Reste à Vivre Prédictif (Apple Wallet Style) */}
+            <div className={`relative overflow-hidden rounded-3xl bg-white border p-6 sm:p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 ${
               activeStrengthId === 2
-                ? "border-emerald-500/50 ring-2 ring-emerald-400/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]"
-                : "border-white/[0.08]"
+                ? "border-emerald-400 ring-4 ring-emerald-500/10 shadow-lg shadow-emerald-500/5"
+                : "border-slate-200/90"
             }`}>
               
-              {/* Subtle top decoration */}
-              <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Wallet className="w-3.5 h-3.5 text-emerald-400" />
+              {/* Top metadata */}
+              <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+                <span className="flex items-center gap-1.5 font-semibold text-slate-700">
+                  <Wallet className="w-4 h-4 text-emerald-600" />
                   Solde Courant
                 </span>
-                <span className="text-[10px] bg-white/[0.05] text-slate-300 px-2 py-0.5 rounded-md border border-white/[0.05]">
+                <span className="text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-medium border border-slate-200/60">
                   Banque Principale (BPCE)
                 </span>
               </div>
 
               {/* Big Clean Balance */}
-              <div className="text-3xl sm:text-4xl font-black text-white tracking-tight my-1">
+              <div className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight my-2 tabular-nums">
                 {currentBalance.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
               </div>
 
               {/* Split Sub-Cards: Epargne & Reste a Vivre */}
-              <div className="grid grid-cols-2 gap-2.5 pt-4 mt-3 border-t border-white/[0.06]">
+              <div className="grid grid-cols-2 gap-3.5 pt-5 mt-5 border-t border-slate-100">
                 
                 {/* Epargne Reserve */}
-                <div className="bg-white/[0.03] border border-white/[0.05] rounded-2xl p-3 flex flex-col">
-                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                    <PiggyBank className="w-3.5 h-3.5 text-teal-400" />
+                <div className="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 flex flex-col">
+                  <span className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                    <PiggyBank className="w-4 h-4 text-teal-600" />
                     Réserve Épargne
                   </span>
-                  <span className="text-base font-extrabold text-white mt-1">
+                  <span className="text-lg font-extrabold text-slate-900 mt-1 tabular-nums">
                     {currentSavings.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
                   </span>
-                  <span className="text-[9px] text-slate-500 mt-0.5">Disponible sans préavis</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">Disponible sans préavis</span>
                 </div>
 
                 {/* Projected Safe-to-Spend Balance */}
-                <div className={`rounded-2xl p-3 flex flex-col border transition-all duration-300 ${
+                <div className={`rounded-2xl p-4 flex flex-col border transition-all duration-300 ${
                   projectedEndOfMonth < 0
-                    ? "bg-rose-500/[0.08] border-rose-500/25"
-                    : "bg-emerald-500/[0.08] border-emerald-500/25"
+                    ? "bg-rose-50/80 border-rose-200/80"
+                    : "bg-emerald-50/80 border-emerald-200/80"
                 }`}>
-                  <span className="text-[11px] text-slate-300 flex items-center gap-1">
-                    <Sparkles className={`w-3.5 h-3.5 ${projectedEndOfMonth < 0 ? "text-rose-400" : "text-emerald-400"}`} />
-                    Reste à Vivre au 30
+                  <span className="text-xs font-semibold flex items-center gap-1.5">
+                    <Sparkles className={`w-4 h-4 ${projectedEndOfMonth < 0 ? "text-rose-600" : "text-emerald-600"}`} />
+                    <span className={projectedEndOfMonth < 0 ? "text-rose-800" : "text-emerald-800"}>
+                      Reste à Vivre au 30
+                    </span>
                   </span>
-                  <span className={`text-base font-black mt-1 ${
-                    projectedEndOfMonth < 0 ? "text-rose-400" : "text-emerald-400"
+                  <span className={`text-lg font-black mt-1 tabular-nums ${
+                    projectedEndOfMonth < 0 ? "text-rose-600" : "text-emerald-700"
                   }`}>
                     {projectedEndOfMonth < 0
                       ? `${projectedEndOfMonth.toFixed(2)} €`
                       : `+${projectedEndOfMonth.toFixed(2)} €`}
                   </span>
-                  <span className={`text-[9px] font-semibold mt-0.5 ${
-                    projectedEndOfMonth < 0 ? "text-rose-300" : "text-emerald-300"
+                  <span className={`text-[10px] font-bold mt-0.5 ${
+                    projectedEndOfMonth < 0 ? "text-rose-600" : "text-emerald-700"
                   }`}>
                     {projectedEndOfMonth < 0 ? "⚠ Risque d'agios (-45 €)" : "✓ Budget sécurisé (+15 €)"}
                   </span>
@@ -568,41 +561,41 @@ export default function FinTrackPOC() {
 
             </div>
 
-            {/* ⭐ POINT FORT #1 & #2: Proactive AI Copilot Card */}
+            {/* ⭐ POINT FORT #1 & #2: Proactive AI Copilot Card (Revolut / Stripe Light) */}
             {!isResolved ? (
-              <div className={`rounded-3xl bg-gradient-to-br from-rose-950/30 via-[#0B0F1A] to-[#0B0F1A] border p-4 sm:p-5 shadow-lg relative overflow-hidden transition-all duration-300 ${
+              <div className={`rounded-3xl bg-gradient-to-b from-rose-50/60 to-white border p-6 shadow-sm relative overflow-hidden transition-all duration-300 ${
                 activeStrengthId === 1 || activeStrengthId === 2
-                  ? "border-rose-500/60 ring-2 ring-rose-500/40 shadow-[0_0_25px_rgba(244,63,94,0.2)]"
-                  : "border-rose-500/30"
+                  ? "border-rose-400 ring-4 ring-rose-500/10 shadow-md"
+                  : "border-rose-200"
               }`}>
-                <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-2xl bg-rose-500/15 text-rose-400 shrink-0 mt-0.5">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 rounded-2xl bg-rose-100 text-rose-600 shrink-0">
                     <AlertTriangle className="w-5 h-5" />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 space-y-2">
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <h2 className="font-bold text-sm text-rose-200">Alerte IA : Découvert au 24/09</h2>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/30 text-rose-200 font-mono font-bold">
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-extrabold text-sm text-rose-950">Alerte IA : Découvert au 24/09</h2>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono font-bold">
                           Point Fort #1
                         </span>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30">
+                      <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-rose-500 text-white font-black shadow-xs">
                         J-6
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-                      Prélèvement <strong className="text-white">EDF (110 €)</strong> et charges récurrentes feront chuter votre solde à <strong className="text-rose-400 font-bold">-45,00 €</strong>.
+                    <p className="text-xs text-slate-700 leading-relaxed">
+                      Le prélèvement <strong className="text-slate-950 font-bold">EDF (110 €)</strong> et vos charges fixes feront chuter votre solde à <strong className="text-rose-600 font-black">-45,00 €</strong>.
                     </p>
 
-                    <div className="mt-3.5 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex flex-col gap-2.5">
+                    <div className="mt-4 p-4 rounded-2xl bg-white border border-rose-100 flex flex-col gap-3 shadow-xs">
                       <div className="flex items-center justify-between">
-                        <div className="text-xs text-slate-300 flex items-center gap-1.5">
-                          <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                          <span>Action conseillée : Micro-virement de <strong>60 €</strong>.</span>
+                        <div className="text-xs font-medium text-slate-700 flex items-center gap-1.5">
+                          <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
+                          <span>Action conseillée : Micro-virement de <strong className="text-slate-900 font-bold">60 €</strong>.</span>
                         </div>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono font-bold">
                           Point Fort #2
                         </span>
                       </div>
@@ -610,9 +603,9 @@ export default function FinTrackPOC() {
                       {/* 1-Click Resolution Button */}
                       <button
                         onClick={() => setIsResolved(true)}
-                        className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                        className="w-full py-3.5 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-bold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 shadow-md shadow-emerald-600/25 cursor-pointer"
                       >
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-4 h-4 text-white" />
                         <span>Sécuriser en 1 Clic (Éviter 45 € de frais)</span>
                       </button>
                     </div>
@@ -620,28 +613,28 @@ export default function FinTrackPOC() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-3xl bg-gradient-to-br from-emerald-950/30 via-[#0B0F1A] to-[#0B0F1A] border border-emerald-500/30 p-4 sm:p-5 flex items-start gap-3 shadow-lg">
-                <div className="p-2.5 rounded-2xl bg-emerald-500/15 text-emerald-400 shrink-0">
+              <div className="rounded-3xl bg-gradient-to-b from-emerald-50/70 to-white border border-emerald-200/90 p-6 flex items-start gap-4 shadow-sm">
+                <div className="p-3 rounded-2xl bg-emerald-100 text-emerald-700 shrink-0">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <h2 className="font-bold text-sm text-emerald-200">Budget Sécurisé avec Succès</h2>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-mono font-bold">
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-extrabold text-sm text-emerald-950">Budget Sécurisé avec Succès</h2>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-bold">
                         Point Fort #2 Validé
                       </span>
                     </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-black shadow-xs">
                       Protégé
                     </span>
                   </div>
-                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                    Virement de <strong>60 €</strong> exécuté. Votre reste à vivre prévisionnel repasse à <strong className="text-emerald-400 font-bold">+15,00 €</strong>.
+                  <p className="text-xs text-slate-700 leading-relaxed">
+                    Virement de <strong>60 €</strong> exécuté depuis l&apos;épargne. Votre reste à vivre prévisionnel repasse à <strong className="text-emerald-700 font-bold">+15,00 €</strong>.
                   </p>
-                  <p className="text-[11px] text-emerald-400 font-semibold mt-1.5 flex items-center gap-1">
-                    <span>✓</span>
-                    <span>45 € d&apos;agios bancaires et commissions d&apos;intervention économisés.</span>
+                  <p className="text-xs text-emerald-800 font-semibold pt-1 flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>45 € d&apos;agios et commissions d&apos;intervention bancaires économisés.</span>
                   </p>
                 </div>
               </div>
@@ -649,165 +642,169 @@ export default function FinTrackPOC() {
 
             {/* POINT FORT #3: Mode Freelance / Tirelire Fiscale */}
             {mode === "freelance" && (
-              <div className={`rounded-3xl bg-purple-950/20 border p-4 flex flex-col gap-3 transition-all duration-300 ${
+              <div className={`rounded-3xl bg-white border p-6 flex flex-col gap-4 transition-all duration-300 shadow-sm ${
                 activeStrengthId === 3
-                  ? "border-purple-500/60 ring-2 ring-purple-500/40 shadow-[0_0_25px_rgba(168,85,247,0.2)]"
-                  : "border-purple-500/30"
+                  ? "border-indigo-400 ring-4 ring-indigo-500/10 shadow-md"
+                  : "border-slate-200"
               }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4 text-purple-400" />
-                    <span className="text-xs font-bold text-purple-200">
-                      Module Freelance • Tirelire Fiscale Automatique
-                    </span>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-200 font-mono font-bold">
+                    <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+                      <Briefcase className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-slate-900 block">
+                        Module Freelance • Tirelire Fiscale Automatique
+                      </span>
+                      <span className="text-[10px] text-slate-400">Sanctuarisation fiscale temps réel</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full font-bold border border-indigo-100">
                       Point Fort #3
                     </span>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full font-semibold border border-purple-500/30">
-                    Auto-Entreprise
-                  </span>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 text-center">
-                  <div className="bg-white/[0.03] border border-white/[0.05] p-2.5 rounded-2xl">
-                    <span className="text-[10px] text-slate-400 block font-medium">Facturé HT</span>
-                    <span className="font-extrabold text-white text-xs mt-1 block">{freelanceBilled} €</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+                  <div className="bg-slate-50 border border-slate-200/60 p-3.5 rounded-2xl">
+                    <span className="text-[11px] text-slate-500 block font-medium">Facturé HT</span>
+                    <span className="font-extrabold text-slate-900 text-sm mt-1 block tabular-nums">{freelanceBilled} €</span>
                   </div>
-                  <div className="bg-purple-500/[0.08] border border-purple-500/20 p-2.5 rounded-2xl">
-                    <span className="text-[10px] text-purple-300 block font-medium">URSSAF (22%)</span>
-                    <span className="font-extrabold text-purple-300 text-xs mt-1 block">-{urssafReserve} €</span>
+                  <div className="bg-violet-50/80 border border-violet-100 p-3.5 rounded-2xl">
+                    <span className="text-[11px] text-violet-700 block font-medium">URSSAF (22%)</span>
+                    <span className="font-extrabold text-violet-800 text-sm mt-1 block tabular-nums">-{urssafReserve} €</span>
                   </div>
-                  <div className="bg-blue-500/[0.08] border border-blue-500/20 p-2.5 rounded-2xl">
-                    <span className="text-[10px] text-blue-300 block font-medium">TVA (20%)</span>
-                    <span className="font-extrabold text-blue-300 text-xs mt-1 block">-{tvaReserve} €</span>
+                  <div className="bg-sky-50/80 border border-sky-100 p-3.5 rounded-2xl">
+                    <span className="text-[11px] text-sky-700 block font-medium">TVA (20%)</span>
+                    <span className="font-extrabold text-sky-800 text-sm mt-1 block tabular-nums">-{tvaReserve} €</span>
                   </div>
-                  <div className="bg-emerald-500/[0.08] border border-emerald-500/20 p-2.5 rounded-2xl">
-                    <span className="text-[10px] text-emerald-300 block font-medium">Net Réel</span>
-                    <span className="font-black text-emerald-400 text-xs mt-1 block">+{netAvailableFreelance} €</span>
+                  <div className="bg-emerald-50/80 border border-emerald-200 p-3.5 rounded-2xl">
+                    <span className="text-[11px] text-emerald-700 block font-medium">Net Réel</span>
+                    <span className="font-black text-emerald-800 text-sm mt-1 block tabular-nums">+{netAvailableFreelance} €</span>
                   </div>
                 </div>
 
-                <p className="text-[11px] text-slate-400 text-center italic">
+                <p className="text-xs text-slate-500 text-center italic bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                   💡 935 € (URSSAF) et 850 € (TVA) isolés automatiquement sur sous-comptes séquestres.
                 </p>
               </div>
             )}
 
-            {/* 30-Day Predictive Cash Flow Curve (SVG Lissé & Épuré) */}
-            <div className={`rounded-3xl bg-white/[0.03] border p-4 flex flex-col gap-2 transition-all duration-300 ${
+            {/* 30-Day Predictive Cash Flow Curve (SVG Aéré & Lisible sur Blanc) */}
+            <div className={`rounded-3xl bg-white border p-6 flex flex-col gap-3 transition-all duration-300 shadow-sm ${
               activeStrengthId === 1
-                ? "border-emerald-500/40 ring-1 ring-emerald-400/30"
-                : "border-white/[0.06]"
+                ? "border-emerald-400 ring-2 ring-emerald-500/20"
+                : "border-slate-200"
             }`}>
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                <span className="font-bold text-slate-900 flex items-center gap-2">
                   <span>Courbe de Trésorerie à 30 Jours</span>
                   {activeStrengthId === 1 && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-mono font-semibold border border-emerald-200">
                       Prédiction ML
                     </span>
                   )}
                 </span>
-                <span className="text-[10px] text-slate-400">Seuil 0 € Découvert</span>
+                <span className="text-xs text-slate-400 font-medium">Seuil 0 € Découvert</span>
               </div>
 
-              {/* Vectorial Chart */}
-              <div className="h-16 w-full relative pt-1">
-                <svg className="w-full h-full overflow-visible" viewBox="0 0 300 60">
+              {/* Vectorial Chart sur Fond Blanc */}
+              <div className="h-20 w-full relative pt-2">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 300 65">
                   <defs>
-                    <linearGradient id="roseGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#F43F5E" stopOpacity="0.3" />
-                      <stop offset="100%" stopColor="#F43F5E" stopOpacity="0" />
+                    <linearGradient id="roseLightGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#F43F5E" stopOpacity="0.18" />
+                      <stop offset="100%" stopColor="#F43F5E" stopOpacity="0.01" />
                     </linearGradient>
-                    <linearGradient id="emeraldGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
-                      <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+                    <linearGradient id="emeraldLightGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
+                      <stop offset="100%" stopColor="#10B981" stopOpacity="0.01" />
                     </linearGradient>
                   </defs>
 
                   {/* 0 € Threshold Line */}
-                  <line x1="0" y1="42" x2="300" y2="42" stroke="#334155" strokeDasharray="3,3" strokeWidth="1" />
+                  <line x1="0" y1="45" x2="300" y2="45" stroke="#CBD5E1" strokeDasharray="4,4" strokeWidth="1.2" />
 
                   {!isResolved ? (
                     <>
                       <path
-                        d="M 0,18 Q 80,22 160,30 T 240,54 T 300,48 L 300,60 L 0,60 Z"
-                        fill="url(#roseGrad)"
+                        d="M 0,20 Q 80,24 160,32 T 240,56 T 300,50 L 300,65 L 0,65 Z"
+                        fill="url(#roseLightGrad)"
                       />
                       <path
-                        d="M 0,18 Q 80,22 160,30 T 240,54 T 300,48"
+                        d="M 0,20 Q 80,24 160,32 T 240,56 T 300,50"
                         fill="none"
-                        stroke="#F43F5E"
-                        strokeWidth="2.5"
+                        stroke="#E11D48"
+                        strokeWidth="3"
                         strokeLinecap="round"
                       />
-                      <circle cx="240" cy="54" r="5" fill="#F43F5E" className="animate-ping" />
-                      <circle cx="240" cy="54" r="3.5" fill="#F43F5E" />
+                      <circle cx="240" cy="56" r="6" fill="#F43F5E" opacity="0.3" className="animate-ping" />
+                      <circle cx="240" cy="56" r="4" fill="#E11D48" />
                     </>
                   ) : (
                     <>
                       <path
-                        d="M 0,18 Q 80,20 160,24 T 240,30 T 300,28 L 300,60 L 0,60 Z"
-                        fill="url(#emeraldGrad)"
+                        d="M 0,20 Q 80,22 160,26 T 240,32 T 300,30 L 300,65 L 0,65 Z"
+                        fill="url(#emeraldLightGrad)"
                       />
                       <path
-                        d="M 0,18 Q 80,20 160,24 T 240,30 T 300,28"
+                        d="M 0,20 Q 80,22 160,26 T 240,32 T 300,30"
                         fill="none"
-                        stroke="#10B981"
-                        strokeWidth="2.5"
+                        stroke="#059669"
+                        strokeWidth="3"
                         strokeLinecap="round"
                       />
-                      <circle cx="240" cy="30" r="3.5" fill="#10B981" />
+                      <circle cx="240" cy="32" r="4" fill="#059669" />
                     </>
                   )}
                 </svg>
               </div>
 
-              <div className="flex justify-between text-[10px] text-slate-500 pt-1 border-t border-white/[0.04]">
+              <div className="flex justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
                 <span>Aujourd&apos;hui (J+1)</span>
-                <span className={!isResolved ? "text-rose-400 font-bold" : "text-emerald-400 font-semibold"}>
+                <span className={!isResolved ? "text-rose-600 font-bold" : "text-emerald-700 font-bold"}>
                   24/09 : Prélèvement EDF (110 €)
                 </span>
                 <span>30 Septembre</span>
               </div>
             </div>
 
-            {/* Transactions Feed (Clean List) */}
-            <div className={`flex flex-col gap-2 transition-all duration-300 ${
-              activeStrengthId === 4 ? "p-2 rounded-2xl bg-teal-500/[0.04] border border-teal-500/20" : ""
+            {/* Transactions Feed (Apple Pay / Revolut Clean List) */}
+            <div className={`flex flex-col gap-3 transition-all duration-300 ${
+              activeStrengthId === 4 ? "p-3 rounded-3xl bg-teal-50/40 border border-teal-200" : ""
             }`}>
-              <div className="flex items-center justify-between text-xs font-bold text-slate-300">
-                <span className="flex items-center gap-1.5">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+                <span className="flex items-center gap-2">
                   <span>Transactions Récentes</span>
                   {activeStrengthId === 4 && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 font-mono font-semibold">
                       Flux Bridge API DSP2
                     </span>
                   )}
                 </span>
-                <span className="text-[10px] text-slate-500 font-normal">Synchronisé en temps réel</span>
+                <span className="text-xs text-slate-400 font-normal">Synchronisé en temps réel</span>
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 {INITIAL_TRANSACTIONS.slice(0, 4).map((tx) => (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between p-2.5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.05] transition text-xs"
+                    className="flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/70 transition text-xs shadow-2xs"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold ${
-                        tx.type === "income" ? "bg-emerald-500/15 text-emerald-400" : "bg-white/[0.05] text-slate-300"
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold ${
+                        tx.type === "income" ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-600"
                       }`}>
-                        {tx.type === "income" ? <ArrowDownLeft className="w-3.5 h-3.5" /> : <ArrowUpRight className="w-3.5 h-3.5" />}
+                        {tx.type === "income" ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
                       </div>
                       <div>
-                        <span className="font-semibold text-white block text-xs">{tx.name}</span>
-                        <span className="text-[10px] text-slate-400">{tx.date} • {tx.category}</span>
+                        <span className="font-bold text-slate-900 block text-xs">{tx.name}</span>
+                        <span className="text-[11px] text-slate-500 font-medium">{tx.date} • {tx.category}</span>
                       </div>
                     </div>
-                    <span className={`font-bold ${tx.type === "income" ? "text-emerald-400" : "text-slate-200"}`}>
-                      {tx.type === "income" ? "+" : "-"}{tx.amount} €
+                    <span className={`font-black text-xs tabular-nums ${tx.type === "income" ? "text-emerald-600" : "text-slate-900"}`}>
+                      {tx.type === "income" ? "+" : "-"}{tx.amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
                     </span>
                   </div>
                 ))}
@@ -819,53 +816,70 @@ export default function FinTrackPOC() {
 
       </div>
 
-      {/* Security Console Drawer (Edy Wise DJIHOUA - Point Fort #5) */}
+      {/* Security Console Drawer (Edy Wise DJIHOUA - Style Apple / Stripe Dashboard) */}
       {showSecurityConsole && (
-        <div className="fixed inset-x-0 bottom-0 z-50 bg-[#070A12]/95 border-t border-emerald-500/40 p-4 sm:p-5 backdrop-blur-2xl shadow-2xl animate-in slide-in-from-bottom duration-200">
-          <div className="max-w-4xl mx-auto flex flex-col gap-3">
+        <div className="fixed inset-x-0 bottom-0 z-50 bg-white/95 border-t border-slate-200/90 p-5 sm:p-6 backdrop-blur-2xl shadow-[0_-20px_50px_rgba(15,23,42,0.1)] animate-in slide-in-from-bottom duration-200">
+          <div className="max-w-4xl mx-auto flex flex-col gap-4">
             
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-emerald-400" />
-                <span className="font-mono text-xs font-bold text-white tracking-wide">
-                  Console Cybersécurité & RGPD — Edy Wise DJIHOUA (DPO)
-                </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-teal-50 text-teal-700 border border-teal-200">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="font-bold text-xs text-slate-900 tracking-wide block">
+                    Console Cybersécurité & RGPD — Edy Wise DJIHOUA (DPO)
+                  </span>
+                  <span className="text-[10px] text-slate-500">Architecture souveraine & Privacy by Design</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono font-bold border border-emerald-200 ml-2">
                   Point Fort #5
                 </span>
               </div>
               <button
                 onClick={() => setShowSecurityConsole(false)}
-                className="text-xs text-slate-400 hover:text-white px-2.5 py-1 rounded-lg bg-white/[0.05] border border-white/[0.08] cursor-pointer"
+                className="text-xs text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 transition font-medium cursor-pointer"
               >
                 Fermer [✕]
               </button>
             </div>
 
-            <div className="font-mono text-[11px] space-y-1.5 text-slate-300">
-              <p className="text-emerald-400">
-                ✔ [AES-256-GCM] Chiffrement au repos • Clés DEK protégées sous HSM (SecNumCloud OVHcloud France)
-              </p>
-              <p className="text-teal-300">
-                ✔ [DSP2 OAUTH2] Bridge Groupe BPCE • Zéro stockage d&apos;identifiants ni mots de passe bancaires
-              </p>
-              <p className="text-cyan-300">
-                ✔ [ZERO-KNOWLEDGE] Isolation physique étanche : Table identités ≠ Table transactions financières
-              </p>
-              <p className={isKeyDestroyed ? "text-rose-400 font-bold" : "text-amber-300"}>
-                {isKeyDestroyed
-                  ? "✖ [CRYPTO-SHREDDING EXÉCUTÉ] Clé détruite avec succès ➔ Données financières mathématiquement effacées (RGPD Art. 17)"
-                  : "⚡ [RGPD ART. 17] Droit à l'oubli instantané par destruction cryptographique"}
-              </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono text-xs">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-700 flex items-start gap-2">
+                <span className="text-emerald-600 font-bold">✔</span>
+                <span><strong>[AES-256-GCM]</strong> Clés DEK sous HSM (SecNumCloud OVHcloud France)</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-700 flex items-start gap-2">
+                <span className="text-teal-600 font-bold">✔</span>
+                <span><strong>[DSP2 OAUTH2]</strong> Bridge BPCE • Zéro mot de passe bancaire stocké</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-700 flex items-start gap-2">
+                <span className="text-sky-600 font-bold">✔</span>
+                <span><strong>[ZERO-KNOWLEDGE]</strong> Tables identités ≠ Tables transactions financières</span>
+              </div>
+              <div className={`p-3 rounded-2xl border flex items-start gap-2 transition-all ${
+                isKeyDestroyed
+                  ? "bg-rose-50 border-rose-200 text-rose-800 font-bold"
+                  : "bg-slate-50 border-slate-200/80 text-slate-700"
+              }`}>
+                <span className={isKeyDestroyed ? "text-rose-600" : "text-amber-600 font-bold"}>
+                  {isKeyDestroyed ? "✖" : "⚡"}
+                </span>
+                <span>
+                  {isKeyDestroyed
+                    ? "CRYPTO-SHREDDING RÉUSSI : Clé détruite ➔ Données effacées (RGPD Art. 17)"
+                    : "RGPD ART. 17 : Droit à l'oubli instantané par destruction cryptographique"}
+                </span>
+              </div>
             </div>
 
             {!isKeyDestroyed && (
               <button
                 onClick={() => setIsKeyDestroyed(true)}
-                className="self-start mt-1 px-3.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center gap-2 transition cursor-pointer"
+                className="self-start mt-1 px-4 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2 transition cursor-pointer shadow-2xs"
               >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Tester le Crypto-Shredding (Droit à l&apos;oubli)</span>
+                <Trash2 className="w-4 h-4" />
+                <span>Tester le Crypto-Shredding en direct (Droit à l&apos;oubli)</span>
               </button>
             )}
 
@@ -874,7 +888,7 @@ export default function FinTrackPOC() {
       )}
 
       {/* Minimal Sleek Footer */}
-      <footer className="border-t border-white/[0.04] bg-[#070A12] py-3 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200/80 bg-white py-4 text-center text-xs text-slate-500">
         FinTrack © 2026 • ÉSTIAM Paris StartUp&apos;IT • Hassâne, Duval, Super Abel, Edy, Rayan, Randy
       </footer>
 
