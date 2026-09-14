@@ -19,9 +19,15 @@ import {
   Lock,
   Trash2,
   ChevronRight,
+  ChevronLeft,
   Zap,
   Info,
-  Layers
+  Layers,
+  Sparkle,
+  Compass,
+  Check,
+  ArrowRight,
+  X
 } from "lucide-react";
 
 interface Transaction {
@@ -43,6 +49,76 @@ const INITIAL_TRANSACTIONS: Transaction[] = [
   { id: "7", name: "Restaurant & Sorties", category: "Loisirs", date: "18 Sept", amount: 75, type: "expense" },
 ];
 
+interface StrengthPoint {
+  id: number;
+  title: string;
+  tabLabel: string;
+  badge: string;
+  shortDesc: string;
+  traditionalProblem: string;
+  fintrackBreakthrough: string;
+  presenters: string;
+  mode: "b2c" | "freelance";
+}
+
+const STRENGTHS: StrengthPoint[] = [
+  {
+    id: 1,
+    title: "IA Prédictive & Proactive à 30 Jours (J-6)",
+    tabLabel: "1. IA Prédictive J-6",
+    badge: "Anticipation vs Constat",
+    shortDesc: "Modèle ML anticipant le découvert 6 jours avant l'échéance critique du prélèvement EDF.",
+    traditionalProblem: "Banques traditionnelles : constatent le découvert après coup et facturent 45 € d'agios et commissions.",
+    fintrackBreakthrough: "FinTrack : prédiction temporelle continue (séries temporelles) alertant à J-6 pour agir avant l'incident.",
+    presenters: "Super Abel TCHOUFONG (CTO) & Rayan Trevis (Dev)",
+    mode: "b2c"
+  },
+  {
+    id: 2,
+    title: "Actionnabilité en 1 Clic (Gain Financier Réel)",
+    tabLabel: "2. Action 1-Clic (+60 €)",
+    badge: "Résolution Immédiate",
+    shortDesc: "Micro-arbitrage indolore depuis l'épargne disponible pour sécuriser le solde à +15 €.",
+    traditionalProblem: "Apps bancaires & agrégateurs : graphiques passifs anxiogènes sans aucune solution concrète d'action.",
+    fintrackBreakthrough: "FinTrack : exécution instantanée d'un virement de 60 € ➔ solde sécurisé et économie nette de 45 € d'agios.",
+    presenters: "Randy Neil TCHIMKIO (UX) & Super Abel (CTO)",
+    mode: "b2c"
+  },
+  {
+    id: 3,
+    title: "Module Hybride Freelance (Tirelire Fiscale)",
+    tabLabel: "3. Tirelire Freelance",
+    badge: "Sanctuarisation Fiscale",
+    shortDesc: "Isolation automatique URSSAF (22%) et TVA (20%) sur sous-comptes pour révéler le vrai net.",
+    traditionalProblem: "Gestion freelance classique : risque d'impôt impayé, trésorerie mélangée et anxiété de fin de trimestre.",
+    fintrackBreakthrough: "FinTrack : sanctuarisation instantanée de 935 € URSSAF et 850 € TVA ➔ le freelance sait qu'il lui reste 2 465 € nets.",
+    presenters: "Duval NGUEDIA (DAF) & Hassâne ABACE (RH)",
+    mode: "freelance"
+  },
+  {
+    id: 4,
+    title: "Open Banking DSP2 Certifié (Zero Login Storage)",
+    tabLabel: "4. Open Banking DSP2",
+    badge: "Connectivité Bancaire",
+    shortDesc: "Agrégation temps réel via Bridge (Groupe BPCE) avec authentification forte OAuth2.",
+    traditionalProblem: "Ancien scraping bancaire : stockage d'identifiants et codes secrets en clair, risques massifs de fuite.",
+    fintrackBreakthrough: "FinTrack : flux API officiels européens DSP2 ➔ zéro identifiant stocké sur nos serveurs.",
+    presenters: "Rayan Trevis (Dev) & Edy Wise DJIHOUA (Sécurité)",
+    mode: "b2c"
+  },
+  {
+    id: 5,
+    title: "Cybersécurité Souveraine & Droit à l'Oubli",
+    tabLabel: "5. Sécurité & RGPD",
+    badge: "Souveraineté & Art. 17",
+    shortDesc: "Chiffrement AES-256 HSM, hébergement français OVHcloud et Crypto-Shredding interactif.",
+    traditionalProblem: "Acteurs US & fintechs : profilage publicitaire, monétisation des flux et rétention abusive des données.",
+    fintrackBreakthrough: "FinTrack : architecture Zero-Knowledge (identité ≠ solde) et destruction mathématique irréversible des clés.",
+    presenters: "Edy Wise DJIHOUA (Ingénieur Cybersécurité & DPO)",
+    mode: "b2c"
+  }
+];
+
 export default function FinTrackPOC() {
   // Mode controls
   const [mode, setMode] = useState<"b2c" | "freelance">("b2c");
@@ -50,6 +126,10 @@ export default function FinTrackPOC() {
   const [isResolved, setIsResolved] = useState<boolean>(false);
   const [showSecurityConsole, setShowSecurityConsole] = useState<boolean>(false);
   const [isKeyDestroyed, setIsKeyDestroyed] = useState<boolean>(false);
+
+  // Strength showcase state (null = free exploration, 1..5 = guided mode)
+  const [activeStrengthId, setActiveStrengthId] = useState<number | null>(1);
+  const [isGuideOpen, setIsGuideOpen] = useState<boolean>(true);
 
   // Exact math calibrated for the live demo scenario:
   // Base current account balance: 410.00 €
@@ -76,6 +156,44 @@ export default function FinTrackPOC() {
     setIsKeyDestroyed(false);
   };
 
+  const handleSelectStrength = (id: number) => {
+    setActiveStrengthId(id);
+    setIsGuideOpen(true);
+    const s = STRENGTHS.find((item) => item.id === id);
+    if (s) {
+      if (s.mode === "freelance") {
+        setMode("freelance");
+      } else {
+        setMode("b2c");
+      }
+      if (s.id === 5) {
+        setShowSecurityConsole(true);
+      } else {
+        setShowSecurityConsole(false);
+      }
+    }
+  };
+
+  const handleNextStrength = () => {
+    if (activeStrengthId === null) {
+      handleSelectStrength(1);
+    } else {
+      const nextId = activeStrengthId < 5 ? activeStrengthId + 1 : 1;
+      handleSelectStrength(nextId);
+    }
+  };
+
+  const handlePrevStrength = () => {
+    if (activeStrengthId === null) {
+      handleSelectStrength(1);
+    } else {
+      const prevId = activeStrengthId > 1 ? activeStrengthId - 1 : 5;
+      handleSelectStrength(prevId);
+    }
+  };
+
+  const currentStrength = STRENGTHS.find((s) => s.id === activeStrengthId);
+
   return (
     <main className="min-h-screen bg-[#070A12] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
       
@@ -83,7 +201,7 @@ export default function FinTrackPOC() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
 
       {/* Top Header Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b border-white/[0.06] bg-[#070A12]/85 backdrop-blur-xl px-4 py-3">
+      <header className="sticky top-0 z-40 w-full border-b border-white/[0.06] bg-[#070A12]/85 backdrop-blur-xl px-4 py-2.5">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
           
           {/* Brand Logo & Presentation Tag */}
@@ -107,6 +225,20 @@ export default function FinTrackPOC() {
           {/* Quick Action Controls */}
           <div className="flex items-center gap-2">
             
+            {/* Guide Toggle Button */}
+            <button
+              onClick={() => setIsGuideOpen(!isGuideOpen)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition cursor-pointer ${
+                isGuideOpen
+                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                  : "bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border-white/[0.08]"
+              }`}
+              title="Afficher/Masquer le guide des points forts du projet"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Points Forts</span>
+            </button>
+
             {/* Mode Switcher: Particulier vs Freelance */}
             <div className="flex bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]">
               <button
@@ -118,7 +250,7 @@ export default function FinTrackPOC() {
                 }`}
               >
                 <User className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Particulier</span>
+                <span className="hidden sm:inline">Particulier</span>
               </button>
               <button
                 onClick={() => setMode("freelance")}
@@ -129,7 +261,7 @@ export default function FinTrackPOC() {
                 }`}
               >
                 <Briefcase className="w-3.5 h-3.5 text-purple-400" />
-                <span>Freelance</span>
+                <span className="hidden sm:inline">Freelance</span>
               </button>
             </div>
 
@@ -158,7 +290,11 @@ export default function FinTrackPOC() {
             {/* Security Console Drawer Trigger (Edy Wise DJIHOUA) */}
             <button
               onClick={() => setShowSecurityConsole(!showSecurityConsole)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition cursor-pointer ${
+                showSecurityConsole
+                  ? "bg-cyan-500/20 text-cyan-200 border-cyan-500/40"
+                  : "bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-slate-300 hover:text-white"
+              }`}
               title="Console Cybersécurité & RGPD"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -170,6 +306,128 @@ export default function FinTrackPOC() {
         </div>
       </header>
 
+      {/* ⭐ INTERACTIVE SHOWCASE OF PROJECT STRENGTHS (Guide Soutenance Jury) */}
+      {isGuideOpen && (
+        <section className="w-full bg-[#0B0F1A]/90 border-b border-emerald-500/20 py-3.5 px-4 backdrop-blur-xl transition-all">
+          <div className="max-w-5xl mx-auto flex flex-col gap-3">
+            
+            {/* Top Bar with Tabs and Stepper */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                  <Sparkle className="w-3.5 h-3.5" />
+                  Points Forts du Projet
+                </span>
+                <span className="text-[11px] text-slate-400 hidden md:inline">
+                  (Cliquez sur un point fort pour l&apos;activer dans l&apos;application)
+                </span>
+              </div>
+
+              {/* Stepper Controls */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handlePrevStrength}
+                  className="p-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition cursor-pointer"
+                  title="Point précédent"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-xs font-mono text-emerald-300 px-1.5">
+                  {activeStrengthId || 1} / 5
+                </span>
+                <button
+                  onClick={handleNextStrength}
+                  className="p-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition cursor-pointer"
+                  title="Point suivant"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => setIsGuideOpen(false)}
+                  className="ml-2 text-slate-500 hover:text-slate-300 text-xs p-1"
+                  title="Masquer le guide"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* 5 Points Forts Tabs */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+              {STRENGTHS.map((st) => {
+                const isCurrent = activeStrengthId === st.id;
+                return (
+                  <button
+                    key={st.id}
+                    onClick={() => handleSelectStrength(st.id)}
+                    className={`p-2 rounded-xl text-left transition-all duration-200 border cursor-pointer flex flex-col justify-between gap-1 ${
+                      isCurrent
+                        ? "bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-400/40"
+                        : "bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.06] text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[10px] font-bold tracking-tight uppercase ${isCurrent ? "text-emerald-300" : "text-slate-500"}`}>
+                        {st.badge}
+                      </span>
+                      {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                    </div>
+                    <span className={`text-xs font-bold leading-snug line-clamp-1 ${isCurrent ? "text-white" : "text-slate-300"}`}>
+                      {st.tabLabel}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Strength Detailed Comparative Callout */}
+            {currentStrength && (
+              <div className="mt-1 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+                
+                {/* Left side: Context & Presenter */}
+                <div className="space-y-1 md:max-w-md">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-extrabold text-sm text-white flex items-center gap-1.5">
+                      <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
+                      {currentStrength.title}
+                    </h3>
+                  </div>
+                  <p className="text-slate-300 leading-relaxed text-[11px]">
+                    {currentStrength.shortDesc}
+                  </p>
+                  <div className="text-[10px] text-slate-400 pt-0.5">
+                    🎤 <span className="text-slate-300 font-semibold">Orateurs démo :</span> {currentStrength.presenters}
+                  </div>
+                </div>
+
+                {/* Right side: Traditional vs FinTrack Breakthrough */}
+                <div className="w-full md:w-auto flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                  
+                  {/* Traditional Market problem */}
+                  <div className="p-2.5 rounded-xl bg-rose-500/[0.07] border border-rose-500/20 text-slate-300">
+                    <span className="text-rose-400 font-bold block text-[10px] uppercase tracking-wider mb-0.5">
+                      ❌ Banques & Concurrence
+                    </span>
+                    <p className="leading-snug">{currentStrength.traditionalProblem}</p>
+                  </div>
+
+                  {/* FinTrack Innovation */}
+                  <div className="p-2.5 rounded-xl bg-emerald-500/[0.08] border border-emerald-500/25 text-slate-200">
+                    <span className="text-emerald-400 font-bold block text-[10px] uppercase tracking-wider mb-0.5">
+                      ✓ Rupture FinTrack
+                    </span>
+                    <p className="leading-snug">{currentStrength.fintrackBreakthrough}</p>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+          </div>
+        </section>
+      )}
+
       {/* Main Container Area */}
       <div className="flex-1 w-full max-w-5xl mx-auto p-4 md:py-6 flex flex-col items-center justify-start">
         
@@ -178,7 +436,7 @@ export default function FinTrackPOC() {
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${isResolved ? "bg-emerald-400" : "bg-rose-500 animate-pulse"}`} />
             <span className="text-slate-300 font-medium">
-              {isResolved ? "Scénario sécurisé (+15 € en fin de mois)" : "Alerte proactive J-6 : Risque découvert (-45 €)"}
+              {isResolved ? "Scénario résolu (+15 € fin de mois sécurisée)" : "Alerte proactive J-6 : Risque découvert (-45 €)"}
             </span>
           </div>
           {isResolved && (
@@ -219,7 +477,7 @@ export default function FinTrackPOC() {
           {/* App Body Content */}
           <div className="p-4 sm:p-5 flex flex-col gap-4">
             
-            {/* User Greeting & Open Banking Badge */}
+            {/* User Greeting & Open Banking Badge (Point Fort #4 Highlight) */}
             <div className="flex items-center justify-between pt-1">
               <div>
                 <p className="text-xs text-slate-400 font-medium">Bonjour Maxime 👋</p>
@@ -227,14 +485,29 @@ export default function FinTrackPOC() {
                   {mode === "b2c" ? "Vue Budgétaire Proactive" : "Espace Trésorerie Freelance"}
                 </h1>
               </div>
-              <div className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-1.5">
+              
+              {/* Point Fort 4 Badge: DSP2 */}
+              <button
+                onClick={() => handleSelectStrength(4)}
+                className={`px-2.5 py-1 rounded-full border flex items-center gap-1.5 transition cursor-pointer ${
+                  activeStrengthId === 4
+                    ? "bg-teal-500/20 border-teal-400 text-teal-200 ring-2 ring-teal-400/50 shadow-[0_0_15px_rgba(20,184,166,0.3)]"
+                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-300 hover:bg-emerald-500/20"
+                }`}
+                title="Cliquer pour voir le Point Fort #4 : Open Banking DSP2"
+              >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-semibold text-emerald-300">DSP2 Connecté</span>
-              </div>
+                <span className="text-[10px] font-semibold">DSP2 Connecté</span>
+                <span className="text-[9px] px-1 rounded bg-teal-500/30 text-teal-200 font-mono">#4</span>
+              </button>
             </div>
 
             {/* Hero Card: Solde & Reste à Vivre Prédictif */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/[0.08] p-5 shadow-xl backdrop-blur-xl">
+            <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border p-5 shadow-xl backdrop-blur-xl transition-all duration-300 ${
+              activeStrengthId === 2
+                ? "border-emerald-500/50 ring-2 ring-emerald-400/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+                : "border-white/[0.08]"
+            }`}>
               
               {/* Subtle top decoration */}
               <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
@@ -243,7 +516,7 @@ export default function FinTrackPOC() {
                   Solde Courant
                 </span>
                 <span className="text-[10px] bg-white/[0.05] text-slate-300 px-2 py-0.5 rounded-md border border-white/[0.05]">
-                  Banque Principale
+                  Banque Principale (BPCE)
                 </span>
               </div>
 
@@ -287,7 +560,7 @@ export default function FinTrackPOC() {
                   <span className={`text-[9px] font-semibold mt-0.5 ${
                     projectedEndOfMonth < 0 ? "text-rose-300" : "text-emerald-300"
                   }`}>
-                    {projectedEndOfMonth < 0 ? "⚠ Risque d'agios" : "✓ Budget sécurisé"}
+                    {projectedEndOfMonth < 0 ? "⚠ Risque d'agios (-45 €)" : "✓ Budget sécurisé (+15 €)"}
                   </span>
                 </div>
 
@@ -295,16 +568,25 @@ export default function FinTrackPOC() {
 
             </div>
 
-            {/* ⭐ THE CORE LIVE DEMO: Proactive AI Copilot Card */}
+            {/* ⭐ POINT FORT #1 & #2: Proactive AI Copilot Card */}
             {!isResolved ? (
-              <div className="rounded-3xl bg-gradient-to-br from-rose-950/30 via-[#0B0F1A] to-[#0B0F1A] border border-rose-500/30 p-4 sm:p-5 shadow-lg relative overflow-hidden">
+              <div className={`rounded-3xl bg-gradient-to-br from-rose-950/30 via-[#0B0F1A] to-[#0B0F1A] border p-4 sm:p-5 shadow-lg relative overflow-hidden transition-all duration-300 ${
+                activeStrengthId === 1 || activeStrengthId === 2
+                  ? "border-rose-500/60 ring-2 ring-rose-500/40 shadow-[0_0_25px_rgba(244,63,94,0.2)]"
+                  : "border-rose-500/30"
+              }`}>
                 <div className="flex items-start gap-3">
                   <div className="p-2.5 rounded-2xl bg-rose-500/15 text-rose-400 shrink-0 mt-0.5">
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <h2 className="font-bold text-sm text-rose-200">Alerte IA : Découvert au 24/09</h2>
+                      <div className="flex items-center gap-1.5">
+                        <h2 className="font-bold text-sm text-rose-200">Alerte IA : Découvert au 24/09</h2>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/30 text-rose-200 font-mono font-bold">
+                          Point Fort #1
+                        </span>
+                      </div>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30">
                         J-6
                       </span>
@@ -315,9 +597,14 @@ export default function FinTrackPOC() {
                     </p>
 
                     <div className="mt-3.5 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex flex-col gap-2.5">
-                      <div className="text-xs text-slate-300 flex items-center gap-2">
-                        <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <span>Action conseillée : Micro-virement de <strong>60 €</strong> depuis votre épargne.</span>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-slate-300 flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <span>Action conseillée : Micro-virement de <strong>60 €</strong>.</span>
+                        </div>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+                          Point Fort #2
+                        </span>
                       </div>
 
                       {/* 1-Click Resolution Button */}
@@ -339,7 +626,12 @@ export default function FinTrackPOC() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h2 className="font-bold text-sm text-emerald-200">Budget Sécurisé avec Succès</h2>
+                    <div className="flex items-center gap-1.5">
+                      <h2 className="font-bold text-sm text-emerald-200">Budget Sécurisé avec Succès</h2>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-mono font-bold">
+                        Point Fort #2 Validé
+                      </span>
+                    </div>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
                       Protégé
                     </span>
@@ -355,14 +647,21 @@ export default function FinTrackPOC() {
               </div>
             )}
 
-            {/* Mode Freelance: Sanctuarisation Fiscale (4 Colonnes Epurées) */}
+            {/* POINT FORT #3: Mode Freelance / Tirelire Fiscale */}
             {mode === "freelance" && (
-              <div className="rounded-3xl bg-purple-950/20 border border-purple-500/30 p-4 flex flex-col gap-3">
+              <div className={`rounded-3xl bg-purple-950/20 border p-4 flex flex-col gap-3 transition-all duration-300 ${
+                activeStrengthId === 3
+                  ? "border-purple-500/60 ring-2 ring-purple-500/40 shadow-[0_0_25px_rgba(168,85,247,0.2)]"
+                  : "border-purple-500/30"
+              }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-purple-400" />
                     <span className="text-xs font-bold text-purple-200">
                       Module Freelance • Tirelire Fiscale Automatique
+                    </span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-200 font-mono font-bold">
+                      Point Fort #3
                     </span>
                   </div>
                   <span className="text-[10px] px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full font-semibold border border-purple-500/30">
@@ -396,9 +695,20 @@ export default function FinTrackPOC() {
             )}
 
             {/* 30-Day Predictive Cash Flow Curve (SVG Lissé & Épuré) */}
-            <div className="rounded-3xl bg-white/[0.03] border border-white/[0.06] p-4 flex flex-col gap-2">
+            <div className={`rounded-3xl bg-white/[0.03] border p-4 flex flex-col gap-2 transition-all duration-300 ${
+              activeStrengthId === 1
+                ? "border-emerald-500/40 ring-1 ring-emerald-400/30"
+                : "border-white/[0.06]"
+            }`}>
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-slate-200">Courbe de Trésorerie à 30 Jours</span>
+                <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                  <span>Courbe de Trésorerie à 30 Jours</span>
+                  {activeStrengthId === 1 && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                      Prédiction ML
+                    </span>
+                  )}
+                </span>
                 <span className="text-[10px] text-slate-400">Seuil 0 € Découvert</span>
               </div>
 
@@ -464,9 +774,18 @@ export default function FinTrackPOC() {
             </div>
 
             {/* Transactions Feed (Clean List) */}
-            <div className="flex flex-col gap-2">
+            <div className={`flex flex-col gap-2 transition-all duration-300 ${
+              activeStrengthId === 4 ? "p-2 rounded-2xl bg-teal-500/[0.04] border border-teal-500/20" : ""
+            }`}>
               <div className="flex items-center justify-between text-xs font-bold text-slate-300">
-                <span>Transactions Récentes</span>
+                <span className="flex items-center gap-1.5">
+                  <span>Transactions Récentes</span>
+                  {activeStrengthId === 4 && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">
+                      Flux Bridge API DSP2
+                    </span>
+                  )}
+                </span>
                 <span className="text-[10px] text-slate-500 font-normal">Synchronisé en temps réel</span>
               </div>
 
@@ -500,7 +819,7 @@ export default function FinTrackPOC() {
 
       </div>
 
-      {/* Security Console Drawer (Edy Wise DJIHOUA) */}
+      {/* Security Console Drawer (Edy Wise DJIHOUA - Point Fort #5) */}
       {showSecurityConsole && (
         <div className="fixed inset-x-0 bottom-0 z-50 bg-[#070A12]/95 border-t border-emerald-500/40 p-4 sm:p-5 backdrop-blur-2xl shadow-2xl animate-in slide-in-from-bottom duration-200">
           <div className="max-w-4xl mx-auto flex flex-col gap-3">
@@ -510,6 +829,9 @@ export default function FinTrackPOC() {
                 <Terminal className="w-4 h-4 text-emerald-400" />
                 <span className="font-mono text-xs font-bold text-white tracking-wide">
                   Console Cybersécurité & RGPD — Edy Wise DJIHOUA (DPO)
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                  Point Fort #5
                 </span>
               </div>
               <button
